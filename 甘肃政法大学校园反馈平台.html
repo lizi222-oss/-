@@ -1,0 +1,1527 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>校园问题反馈论坛 - 本地演示版</title>
+<style>
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: 'Microsoft YaHei', 'PingFang SC', -apple-system, sans-serif;
+  background: #f5f7fa;
+  min-height: 100vh;
+}
+.top-nav {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 0 30px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 2px 20px rgba(102,126,234,0.3);
+}
+.top-nav .logo { font-size: 20px; font-weight: 700; display: flex; align-items: center; gap: 10px; }
+.top-nav .nav-links { display: flex; gap: 25px; align-items: center; }
+.top-nav .nav-links a {
+  color: white; text-decoration: none; font-size: 14px;
+  opacity: 0.85; transition: opacity 0.3s; cursor: pointer;
+}
+.top-nav .nav-links a:hover, .top-nav .nav-links a.active { opacity: 1; font-weight: 600; }
+.top-nav .user-info { display: flex; align-items: center; gap: 15px; font-size: 14px; }
+.top-nav .user-info .name { font-weight: 600; }
+.top-nav .logout-btn {
+  background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3);
+  color: white; padding: 6px 16px; border-radius: 20px;
+  cursor: pointer; font-size: 13px; transition: all 0.3s;
+}
+.top-nav .logout-btn:hover { background: rgba(255,255,255,0.3); }
+.main-layout {
+  max-width: 1200px; margin: 0 auto; padding: 25px;
+  display: grid; grid-template-columns: 320px 1fr; gap: 25px;
+}
+@media (max-width: 900px) { .main-layout { grid-template-columns: 1fr; } }
+.content-area { min-width: 0; }
+.section-title {
+  font-size: 22px; font-weight: 700; color: #333;
+  margin-bottom: 20px; display: flex; align-items: center; gap: 10px;
+}
+.filter-bar {
+  display: flex; gap: 12px; margin-bottom: 20px;
+  flex-wrap: wrap; align-items: center;
+}
+.filter-bar select, .filter-bar button {
+  padding: 10px 16px; border: 2px solid #e9ecef;
+  border-radius: 10px; font-size: 14px; background: white;
+  cursor: pointer; transition: all 0.3s;
+}
+.filter-bar select:focus { outline: none; border-color: #667eea; }
+.filter-bar button {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white; border: none; font-weight: 600;
+}
+.filter-bar button:hover { transform: translateY(-1px); box-shadow: 0 5px 15px rgba(102,126,234,0.3); }
+.question-card {
+  background: white; border-radius: 16px; padding: 24px;
+  margin-bottom: 16px; box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+  transition: all 0.3s; cursor: pointer;
+}
+.question-card:hover {
+  box-shadow: 0 8px 30px rgba(0,0,0,0.12); transform: translateY(-2px);
+}
+.question-card .card-header {
+  display: flex; justify-content: space-between;
+  align-items: flex-start; margin-bottom: 14px;
+}
+.question-card .category-tag {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 6px 14px; border-radius: 20px;
+  font-size: 12px; font-weight: 600;
+}
+.tag-canteen { background: #fff3cd; color: #856404; }
+.tag-dormitory { background: #d4edda; color: #155724; }
+.tag-teaching { background: #cce5ff; color: #004085; }
+.tag-library { background: #f8d7da; color: #721c24; }
+.tag-sports { background: #d1ecf1; color: #0c5460; }
+.tag-other { background: #e2e3e5; color: #383d41; }
+.question-card .status-badge {
+  padding: 5px 12px; border-radius: 20px;
+  font-size: 12px; font-weight: 600;
+}
+.status-pending { background: #fff3cd; color: #856404; }
+.status-resolved { background: #d4edda; color: #155724; }
+.question-card .question-title {
+  font-size: 17px; font-weight: 600; color: #333;
+  line-height: 1.5; margin-bottom: 10px;
+  display: -webkit-box; -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical; overflow: hidden;
+}
+.question-card .question-text {
+  font-size: 14px; color: #666; line-height: 1.6;
+  margin-bottom: 14px;
+  display: -webkit-box; -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical; overflow: hidden;
+}
+.question-card .images-preview {
+  display: flex; gap: 8px; margin-bottom: 14px; flex-wrap: wrap;
+}
+.question-card .images-preview img {
+  width: 80px; height: 80px; object-fit: cover;
+  border-radius: 8px; cursor: pointer; transition: transform 0.3s;
+}
+.question-card .images-preview img:hover { transform: scale(1.05); }
+.question-card .card-footer {
+  display: flex; justify-content: space-between;
+  align-items: center; font-size: 13px; color: #999;
+  padding-top: 14px; border-top: 1px solid #f0f0f0;
+}
+.question-card .card-footer .stats { display: flex; gap: 20px; }
+.question-card .card-footer .stats span { display: flex; align-items: center; gap: 5px; }
+.question-card .author {
+  font-size: 13px; color: #667eea; font-weight: 600; margin-bottom: 8px;
+}
+.sidebar { min-width: 0; }
+.sidebar-card {
+  background: white; border-radius: 16px; padding: 22px;
+  margin-bottom: 20px; box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+}
+.sidebar-card .sidebar-title {
+  font-size: 16px; font-weight: 700; color: #333;
+  margin-bottom: 16px; display: flex; align-items: center; gap: 8px;
+}
+.stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.stat-item {
+  text-align: center; padding: 16px; border-radius: 12px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+.stat-item .number { font-size: 24px; font-weight: 700; }
+.stat-item .label { font-size: 12px; opacity: 0.9; margin-top: 4px; }
+.hot-list { list-style: none; }
+.hot-list li {
+  padding: 12px 0; border-bottom: 1px solid #f0f0f0;
+  cursor: pointer; transition: all 0.3s;
+}
+.hot-list li:last-child { border-bottom: none; }
+.hot-list li:hover { color: #667eea; }
+.hot-list .hot-title {
+  font-size: 14px; color: #333; line-height: 1.4;
+  margin-bottom: 6px;
+  display: -webkit-box; -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical; overflow: hidden;
+}
+.hot-list .hot-meta { font-size: 12px; color: #999; display: flex; gap: 12px; }
+.hot-list .hot-rank {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 22px; height: 22px; border-radius: 6px;
+  font-size: 12px; font-weight: 700; margin-right: 8px;
+}
+.hot-rank.top { background: #ff6b6b; color: white; }
+.hot-rank.normal { background: #e9ecef; color: #666; }
+.category-list { display: flex; flex-wrap: wrap; gap: 8px; }
+.category-chip {
+  padding: 8px 16px; border-radius: 20px; background: #f8f9fa;
+  border: 2px solid #e9ecef; font-size: 13px;
+  cursor: pointer; transition: all 0.3s;
+  display: flex; align-items: center; gap: 6px;
+}
+.category-chip:hover, .category-chip.active {
+  border-color: #667eea;
+  background: linear-gradient(135deg, rgba(102,126,234,0.1) 0%, rgba(118,75,162,0.1) 100%);
+  color: #667eea; font-weight: 600;
+}
+.submit-btn {
+  width: 100%; padding: 16px; border: none; border-radius: 12px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white; font-size: 16px; font-weight: 600;
+  cursor: pointer; transition: all 0.3s;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+}
+.submit-btn:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(102,126,234,0.4); }
+.login-container {
+  max-width: 450px; margin: 60px auto;
+  background: white; border-radius: 20px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.15); overflow: hidden;
+}
+.login-header {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white; padding: 40px 30px; text-align: center;
+}
+.login-header h1 { font-size: 26px; margin-bottom: 8px; }
+.login-header p { opacity: 0.9; font-size: 14px; }
+.login-tabs { display: flex; background: #f8f9fa; border-bottom: 2px solid #e9ecef; }
+.login-tab {
+  flex: 1; padding: 16px; text-align: center; cursor: pointer;
+  font-weight: 600; color: #6c757d; transition: all 0.3s;
+  border: none; background: none; font-size: 15px;
+}
+.login-tab.active { color: #667eea; border-bottom: 3px solid #667eea; background: white; }
+.login-form { padding: 35px; }
+.form-group { margin-bottom: 22px; }
+.form-group label { display: block; margin-bottom: 8px; font-weight: 600; color: #333; font-size: 14px; }
+.form-group input, .form-group select, .form-group textarea {
+  width: 100%; padding: 14px 18px; border: 2px solid #e9ecef;
+  border-radius: 12px; font-size: 15px; transition: all 0.3s; font-family: inherit;
+}
+.form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+  outline: none; border-color: #667eea; box-shadow: 0 0 0 4px rgba(102,126,234,0.1);
+}
+.form-group textarea { min-height: 120px; resize: vertical; }
+.btn-primary {
+  width: 100%; padding: 16px; border: none; border-radius: 12px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white; font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.3s;
+}
+.btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(102,126,234,0.4); }
+.modal-overlay {
+  position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.5); display: flex;
+  justify-content: center; align-items: center;
+  z-index: 200; opacity: 0; visibility: hidden; transition: all 0.3s;
+}
+.modal-overlay.show { opacity: 1; visibility: visible; }
+.modal-content {
+  background: white; border-radius: 20px; width: 90%;
+  max-width: 600px; max-height: 90vh; overflow-y: auto;
+  padding: 30px; transform: scale(0.9); transition: transform 0.3s;
+}
+.modal-overlay.show .modal-content { transform: scale(1); }
+.modal-header {
+  display: flex; justify-content: space-between;
+  align-items: center; margin-bottom: 25px;
+}
+.modal-header h2 { font-size: 20px; color: #333; }
+.modal-close {
+  background: none; border: none; font-size: 24px;
+  cursor: pointer; color: #999; transition: color 0.3s;
+}
+.modal-close:hover { color: #333; }
+.image-upload-area {
+  border: 2px dashed #e9ecef; border-radius: 12px;
+  padding: 30px; text-align: center; cursor: pointer;
+  transition: all 0.3s; margin-bottom: 15px;
+}
+.image-upload-area:hover { border-color: #667eea; background: rgba(102,126,234,0.03); }
+.image-upload-area .upload-icon { font-size: 40px; margin-bottom: 10px; }
+.image-upload-area .upload-text { font-size: 14px; color: #999; }
+.image-preview-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 10px; margin-top: 15px;
+}
+.image-preview-item { position: relative; border-radius: 10px; overflow: hidden; }
+.image-preview-item img { width: 100%; height: 100px; object-fit: cover; }
+.image-preview-item .remove-btn {
+  position: absolute; top: 4px; right: 4px;
+  background: rgba(255,0,0,0.8); color: white; border: none;
+  width: 24px; height: 24px; border-radius: 50%;
+  cursor: pointer; font-size: 14px;
+  display: flex; align-items: center; justify-content: center;
+}
+.detail-page { max-width: 800px; margin: 0 auto; padding: 25px; }
+.detail-card {
+  background: white; border-radius: 16px; padding: 30px;
+  margin-bottom: 20px; box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+}
+.detail-card .detail-header {
+  display: flex; justify-content: space-between;
+  align-items: flex-start; margin-bottom: 20px;
+}
+.detail-card .detail-title { font-size: 22px; font-weight: 700; color: #333; margin-bottom: 12px; }
+.detail-card .detail-content { font-size: 15px; color: #444; line-height: 1.8; margin-bottom: 20px; }
+.detail-card .detail-images {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px;
+  margin-bottom: 20px;
+}
+.detail-card .detail-images img {
+  width: 100%; border-radius: 12px; cursor: pointer; transition: transform 0.3s;
+}
+.detail-card .detail-images img:hover { transform: scale(1.02); }
+.detail-meta {
+  display: flex; gap: 20px; font-size: 13px; color: #999;
+  padding-top: 16px; border-top: 1px solid #f0f0f0;
+}
+.answer-section {
+  background: linear-gradient(135deg, rgba(17,153,142,0.05) 0%, rgba(56,239,125,0.05) 100%);
+  border-radius: 12px; padding: 20px; margin-top: 20px;
+  border-left: 4px solid #11998e;
+}
+.answer-section .answer-label { font-weight: 700; color: #11998e; margin-bottom: 10px; font-size: 14px; }
+.answer-section .answer-text { font-size: 15px; color: #333; line-height: 1.7; }
+.answer-section .responder { text-align: right; font-size: 13px; color: #999; margin-top: 12px; }
+.comments-section { margin-top: 20px; }
+.comments-section .section-label {
+  font-size: 16px; font-weight: 700; color: #333;
+  margin-bottom: 16px; display: flex; align-items: center; gap: 8px;
+}
+.comment-input-area { display: flex; gap: 12px; margin-bottom: 20px; }
+.comment-input-area textarea {
+  flex: 1; padding: 12px 16px; border: 2px solid #e9ecef;
+  border-radius: 12px; font-size: 14px; resize: vertical;
+  min-height: 60px; font-family: inherit;
+}
+.comment-input-area textarea:focus { outline: none; border-color: #667eea; }
+.comment-input-area button {
+  padding: 12px 24px; border: none; border-radius: 12px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white; font-weight: 600; cursor: pointer;
+  transition: all 0.3s; white-space: nowrap;
+}
+.comment-input-area button:hover { transform: translateY(-1px); }
+.comment-item { padding: 16px 0; border-bottom: 1px solid #f0f0f0; }
+.comment-item:last-child { border-bottom: none; }
+.comment-item .comment-header {
+  display: flex; justify-content: space-between;
+  align-items: center; margin-bottom: 8px;
+}
+.comment-item .comment-author { font-weight: 600; color: #667eea; font-size: 14px; }
+.comment-item .comment-time { font-size: 12px; color: #bbb; }
+.comment-item .comment-text { font-size: 14px; color: #444; line-height: 1.6; }
+.action-bar {
+  display: flex; gap: 16px; margin-top: 16px;
+  padding-top: 16px; border-top: 1px solid #f0f0f0;
+}
+.action-btn {
+  display: flex; align-items: center; gap: 6px;
+  padding: 8px 16px; border-radius: 20px;
+  border: 1px solid #e9ecef; background: white;
+  cursor: pointer; font-size: 13px; color: #666;
+  transition: all 0.3s;
+}
+.action-btn:hover { background: #f8f9fa; border-color: #667eea; color: #667eea; }
+.action-btn.active {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white; border-color: transparent;
+}
+.teacher-reply-area { margin-top: 20px; padding-top: 20px; border-top: 2px solid #e9ecef; }
+.teacher-reply-area .reply-label { font-weight: 700; color: #667eea; margin-bottom: 12px; font-size: 15px; }
+.teacher-reply-area textarea {
+  width: 100%; padding: 14px; border: 2px solid #e9ecef;
+  border-radius: 12px; font-size: 14px; min-height: 100px;
+  resize: vertical; font-family: inherit; margin-bottom: 12px;
+}
+.teacher-reply-area textarea:focus { outline: none; border-color: #667eea; }
+.image-viewer {
+  position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.9); display: flex;
+  justify-content: center; align-items: center;
+  z-index: 300; opacity: 0; visibility: hidden; transition: all 0.3s;
+}
+.image-viewer.show { opacity: 1; visibility: visible; }
+.image-viewer img { max-width: 90%; max-height: 90%; border-radius: 8px; }
+.image-viewer .viewer-close {
+  position: absolute; top: 20px; right: 20px;
+  color: white; font-size: 30px; cursor: pointer;
+  background: none; border: none;
+}
+.empty-state { text-align: center; padding: 60px 20px; color: #999; }
+.empty-state .icon { font-size: 64px; margin-bottom: 16px; }
+.empty-state h3 { font-size: 18px; color: #333; margin-bottom: 8px; }
+.toast {
+  position: fixed; top: 80px; right: 30px; background: #333;
+  color: white; padding: 16px 24px; border-radius: 12px;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+  transform: translateX(400px);
+  transition: transform 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  z-index: 400; font-weight: 500;
+}
+.toast.show { transform: translateX(0); }
+.toast.success { background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); }
+.toast.error { background: linear-gradient(135deg, #eb3349 0%, #f45c43 100%); }
+.hidden { display: none !important; }
+.back-btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 10px 20px; border-radius: 10px; background: #f8f9fa;
+  border: 2px solid #e9ecef; color: #667eea;
+  font-weight: 600; cursor: pointer; margin-bottom: 20px;
+  transition: all 0.3s;
+}
+.back-btn:hover { background: #667eea; color: white; border-color: #667eea; }
+@media (max-width: 600px) {
+  .top-nav { padding: 0 15px; }
+  .top-nav .nav-links { gap: 15px; }
+  .main-layout { padding: 15px; gap: 15px; }
+  .question-card { padding: 18px; }
+  .modal-content { padding: 20px; }
+  .detail-card { padding: 20px; }
+}
+</style>
+</head>
+<body>
+
+
+<!-- 顶部导航 -->
+<div class="top-nav" id="topNav" style="display:none;">
+  <div class="logo">🏫 校园问题反馈论坛</div>
+  <div class="nav-links">
+    <a onclick="showMyQuestions()" id="navMy">📝 我的反馈</a>
+    <a onclick="showForum()" id="navForum" class="active">📋 论坛广场</a>
+    <a onclick="showTeacherPage()" id="navTeacher" class="hidden">👨‍🏫 管理后台</a>
+  </div>
+  <div class="user-info">
+    <span class="name" id="navUserName"></span>
+    <button class="logout-btn" onclick="logout()">退出</button>
+  </div>
+</div>
+
+<!-- 登录页面 -->
+<div id="loginPage">
+  <div class="login-container">
+    <div class="login-header">
+      <h1>🏫 校园问题反馈论坛</h1>
+      <p>发现问题 · 交流讨论 · 共同推动校园改善</p>
+    </div>
+    <div class="login-tabs">
+      <button class="login-tab active" onclick="switchLoginTab('student')">👨‍🎓 学生登录</button>
+      <button class="login-tab" onclick="switchLoginTab('teacher')">👨‍🏫 教师/工作人员登录</button>
+    </div>
+    <div class="login-form">
+      <div id="studentLoginForm">
+        <div class="form-group">
+          <label>所属学院</label>
+          <select id="studentCollege">
+            <option value="">请选择学院</option>
+            <option value="计算机学院">计算机学院</option>
+            <option value="电子信息学院">电子信息学院</option>
+            <option value="机械工程学院">机械工程学院</option>
+            <option value="经济管理学院">经济管理学院</option>
+            <option value="外国语学院">外国语学院</option>
+            <option value="文学院">文学院</option>
+            <option value="理学院">理学院</option>
+            <option value="医学院">医学院</option>
+            <option value="法学院">法学院</option>
+            <option value="艺术学院">艺术学院</option>
+            <option value="土木工程学院">土木工程学院</option>
+            <option value="化工学院">化工学院</option>
+          </select>
+        </div>
+        <div class="form-group"><label>姓名</label><input type="text" id="studentName" placeholder="请输入您的姓名"></div>
+        <div class="form-group"><label>学号</label><input type="text" id="studentId" placeholder="请输入您的学号"></div>
+        <button class="btn-primary" onclick="studentLogin()">登录</button>
+      </div>
+      <div id="teacherLoginForm" class="hidden">
+        <div class="form-group"><label>姓名</label><input type="text" id="teacherName" placeholder="请输入教师/工作人员姓名"></div>
+        <div class="form-group"><label>工号</label><input type="text" id="teacherId" placeholder="请输入工号"></div>
+        <button class="btn-primary" onclick="teacherLogin()">登录</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 论坛主页面（左侧边栏 + 右侧问题列表） -->
+<div id="forumPage" class="hidden">
+  <div class="main-layout">
+    <!-- 左侧：侧边栏（提交按钮、统计、分类、热门） -->
+    <div class="sidebar">
+      <div class="sidebar-card">
+        <button class="submit-btn" onclick="openSubmitModal()">✏️ 提交新问题</button>
+      </div>
+      <div class="sidebar-card">
+        <div class="sidebar-title">📊 数据统计</div>
+        <div class="stats-grid">
+          <div class="stat-item"><div class="number" id="statTotal">0</div><div class="label">总问题</div></div>
+          <div class="stat-item"><div class="number" id="statPending">0</div><div class="label">待处理</div></div>
+          <div class="stat-item"><div class="number" id="statResolved">0</div><div class="label">已处理</div></div>
+          <div class="stat-item"><div class="number" id="statToday">0</div><div class="label">今日新增</div></div>
+        </div>
+      </div>
+      <div class="sidebar-card">
+        <div class="sidebar-title">🏷️ 问题分类</div>
+        <div class="category-list">
+          <div class="category-chip" onclick="filterByCategory('食堂')">🍽️ 食堂</div>
+          <div class="category-chip" onclick="filterByCategory('宿舍')">🏠 宿舍</div>
+          <div class="category-chip" onclick="filterByCategory('教学楼')">🏢 教学楼</div>
+          <div class="category-chip" onclick="filterByCategory('图书馆')">📚 图书馆</div>
+          <div class="category-chip" onclick="filterByCategory('体育设施')">⚽ 体育设施</div>
+          <div class="category-chip" onclick="filterByCategory('其它')">📋 其它</div>
+        </div>
+      </div>
+      <div class="sidebar-card">
+        <div class="sidebar-title">🔥 热门问题</div>
+        <ul class="hot-list" id="hotQuestionsList"></ul>
+      </div>
+    </div>
+    <!-- 右侧：问题列表 -->
+    <div class="content-area">
+      <div class="filter-bar">
+        <select id="filterCategory" onchange="loadForum()">
+          <option value="">📂 全部分类</option>
+          <option value="食堂">🍽️ 食堂</option>
+          <option value="宿舍">🏠 宿舍</option>
+          <option value="教学楼">🏢 教学楼</option>
+          <option value="图书馆">📚 图书馆</option>
+          <option value="体育设施">⚽ 体育设施</option>
+          <option value="其它">📋 其它</option>
+        </select>
+        <select id="filterSort" onchange="loadForum()">
+          <option value="new">🕐 最新发布</option>
+          <option value="hot">🔥 热度最高</option>
+        </select>
+        <select id="filterStatus" onchange="loadForum()">
+          <option value="">📊 全部状态</option>
+          <option value="pending">⏳ 待处理</option>
+          <option value="resolved">✅ 已处理</option>
+        </select>
+      </div>
+      <div id="forumQuestionsList"></div>
+    </div>
+  </div>
+</div>
+
+<!-- 我的反馈页面 -->
+<div id="myQuestionsPage" class="hidden">
+  <div class="main-layout">
+    <div class="content-area" style="grid-column: 1 / -1;">
+      <button class="back-btn" onclick="showForum()">← 返回论坛</button>
+      <h2 class="section-title">📝 我的反馈记录</h2>
+      <div id="myQuestionsList"></div>
+    </div>
+  </div>
+</div>
+
+<!-- 问题详情页 -->
+<div id="detailPage" class="hidden">
+  <div class="detail-page">
+    <button class="back-btn" onclick="backToForum()">← 返回论坛</button>
+    <div id="detailContent"></div>
+  </div>
+</div>
+
+<!-- 教师管理页面 -->
+<div id="teacherPage" class="hidden">
+  <div class="main-layout">
+    <div class="content-area" style="grid-column: 1 / -1;">
+      <button class="back-btn" onclick="showForum()">← 返回论坛</button>
+      <h2 class="section-title">👨‍🏫 问题管理后台</h2>
+      <div class="filter-bar">
+        <select id="teacherFilterCategory" onchange="loadTeacherQuestions()">
+          <option value="">📂 全部分类</option>
+          <option value="食堂">🍽️ 食堂</option>
+          <option value="宿舍">🏠 宿舍</option>
+          <option value="教学楼">🏢 教学楼</option>
+          <option value="图书馆">📚 图书馆</option>
+          <option value="体育设施">⚽ 体育设施</option>
+          <option value="其它">📋 其它</option>
+        </select>
+        <select id="teacherFilterStatus" onchange="loadTeacherQuestions()">
+          <option value="">📊 全部状态</option>
+          <option value="pending">⏳ 待处理</option>
+          <option value="resolved">✅ 已处理</option>
+        </select>
+        <button class="btn-primary" style="width:auto;padding:10px 24px;" onclick="loadTeacherQuestions()">🔄 刷新数据</button>
+      </div>
+      <div class="stats-grid" style="margin-bottom:25px;max-width:600px;">
+        <div class="stat-item"><div class="number" id="tStatTotal">0</div><div class="label">总问题</div></div>
+        <div class="stat-item"><div class="number" id="tStatPending">0</div><div class="label">待处理</div></div>
+        <div class="stat-item"><div class="number" id="tStatResolved">0</div><div class="label">已处理</div></div>
+        <div class="stat-item"><div class="number" id="tStatToday">0</div><div class="label">今日新增</div></div>
+      </div>
+      <div id="teacherQuestionsList"></div>
+    </div>
+  </div>
+</div>
+
+<!-- 提交问题弹窗 -->
+<div class="modal-overlay" id="submitModal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2>✏️ 提交新问题</h2>
+      <button class="modal-close" onclick="closeSubmitModal()">×</button>
+    </div>
+    <div class="form-group">
+      <label>选择问题分类</label>
+      <div class="category-list" style="margin-bottom:10px;">
+        <div class="category-chip" data-cat="食堂" onclick="selectModalCategory(this)">🍽️ 食堂</div>
+        <div class="category-chip" data-cat="宿舍" onclick="selectModalCategory(this)">🏠 宿舍</div>
+        <div class="category-chip" data-cat="教学楼" onclick="selectModalCategory(this)">🏢 教学楼</div>
+        <div class="category-chip" data-cat="图书馆" onclick="selectModalCategory(this)">📚 图书馆</div>
+        <div class="category-chip" data-cat="体育设施" onclick="selectModalCategory(this)">⚽ 体育设施</div>
+        <div class="category-chip" data-cat="其它" onclick="selectModalCategory(this)">📋 其它</div>
+      </div>
+    </div>
+    <div class="form-group">
+      <label>问题描述</label>
+      <textarea id="modalQuestionContent" placeholder="请详细描述您遇到的问题，越详细越有助于解决..."></textarea>
+    </div>
+    <div class="form-group">
+      <label>上传图片（可选）</label>
+      <div class="image-upload-area" onclick="document.getElementById('imageInput').click()">
+        <div class="upload-icon">📷</div>
+        <div class="upload-text">点击上传图片，支持多张</div>
+      </div>
+      <input type="file" id="imageInput" accept="image/*" multiple style="display:none;" onchange="handleImageUpload(event)">
+      <div class="image-preview-grid" id="imagePreviewGrid"></div>
+    </div>
+    <button class="btn-primary" onclick="submitQuestion()">提交反馈</button>
+  </div>
+</div>
+
+<!-- 图片查看器 -->
+<div class="image-viewer" id="imageViewer" onclick="closeImageViewer()">
+  <button class="viewer-close">×</button>
+  <img id="viewerImage" src="" alt="">
+</div>
+
+<!-- Toast -->
+<div id="toast" class="toast"></div>
+
+
+<script>
+// ==================== 本地模拟数据库 ====================
+const MOCK_DB = {
+  questions: [
+    {
+      _id: 'q1',
+      category: '食堂',
+      content: '食堂二楼的麻辣烫窗口最近菜品种类变少了，而且价格好像也涨了。希望学校能关注一下，毕竟很多同学都喜欢吃这个。另外，用餐高峰期的座位也不够，经常要站着等位。',
+      studentId: '2021001',
+      studentName: '张三',
+      studentCollege: '计算机学院',
+      status: 'pending',
+      timestamp: new Date(Date.now() - 86400000 * 2).toISOString(),
+      views: 156,
+      upvotes: 23,
+      upvoted: false,
+      commentCount: 3,
+      images: [],
+      comments: [
+        { authorName: '李四', authorCollege: '电子信息学院', content: '确实，我也发现了，以前有牛肉卷现在没有了', timestamp: new Date(Date.now() - 86400000).toISOString() },
+        { authorName: '王五', authorCollege: '经济管理学院', content: '价格确实涨了不少，以前15块能吃饱，现在得20了', timestamp: new Date(Date.now() - 43200000).toISOString() },
+        { authorName: '赵六', authorCollege: '计算机学院', content: '同意楼主，希望能恢复以前的菜品', timestamp: new Date(Date.now() - 3600000).toISOString() }
+      ],
+      answer: '',
+      answeredBy: '',
+      answerTime: ''
+    },
+    {
+      _id: 'q2',
+      category: '宿舍',
+      content: '宿舍楼3栋的电梯最近经常故障，有时候两部都坏了，住在高层的同学上下楼非常不方便。希望能尽快安排维修，或者至少给个预计修复时间。',
+      studentId: '2021002',
+      studentName: '李四',
+      studentCollege: '电子信息学院',
+      status: 'resolved',
+      timestamp: new Date(Date.now() - 86400000 * 5).toISOString(),
+      views: 342,
+      upvotes: 89,
+      upvoted: false,
+      commentCount: 2,
+      images: [],
+      comments: [
+        { authorName: '张三', authorCollege: '计算机学院', content: '感同身受，我住12楼，昨天爬了三次', timestamp: new Date(Date.now() - 86400000 * 4).toISOString() },
+        { authorName: '宿管阿姨', authorCollege: '后勤处', content: '已经联系维修人员了，预计明天修好', timestamp: new Date(Date.now() - 86400000 * 3).toISOString() }
+      ],
+      answer: '已联系电梯维保单位进行全面检修，更换了损坏的零部件，目前电梯已恢复正常运行。后续会加强日常维护，避免类似问题再次发生。',
+      answeredBy: '后勤管理处-王师傅',
+      answerTime: new Date(Date.now() - 86400000 * 2).toISOString()
+    },
+    {
+      _id: 'q3',
+      category: '图书馆',
+      content: '图书馆自习室的空调温度太低了，很多同学都反映冷，希望能适当调高温度或者提供披肩/毯子借用服务。冬天本来就冷，在图书馆待久了容易感冒。',
+      studentId: '2021003',
+      studentName: '王五',
+      studentCollege: '文学院',
+      status: 'pending',
+      timestamp: new Date(Date.now() - 86400000 * 1.5).toISOString(),
+      views: 89,
+      upvotes: 45,
+      upvoted: false,
+      commentCount: 1,
+      images: [],
+      comments: [
+        { authorName: '赵六', authorCollege: '理学院', content: '支持！我已经感冒一次了', timestamp: new Date(Date.now() - 86400000).toISOString() }
+      ],
+      answer: '',
+      answeredBy: '',
+      answerTime: ''
+    },
+    {
+      _id: 'q4',
+      category: '教学楼',
+      content: '第三教学楼301教室的投影仪画面很模糊，坐在后排根本看不清PPT内容。已经持续两周了，影响上课效果，请尽快更换灯泡或维修设备。',
+      studentId: '2021004',
+      studentName: '赵六',
+      studentCollege: '机械工程学院',
+      status: 'resolved',
+      timestamp: new Date(Date.now() - 86400000 * 7).toISOString(),
+      views: 67,
+      upvotes: 12,
+      upvoted: false,
+      commentCount: 0,
+      images: [],
+      comments: [],
+      answer: '已安排技术人员更换投影仪灯泡并清洁镜头，目前投影效果已恢复正常。感谢反馈！',
+      answeredBy: '教务处-李老师',
+      answerTime: new Date(Date.now() - 86400000 * 5).toISOString()
+    },
+    {
+      _id: 'q5',
+      category: '体育设施',
+      content: '体育馆的羽毛球场地预约系统经常崩溃，好不容易抢到的时间段到了现场发现场地被占了。希望能优化预约系统，或者增加现场签到验证。',
+      studentId: '2021005',
+      studentName: '孙七',
+      studentCollege: '医学院',
+      status: 'pending',
+      timestamp: new Date(Date.now() - 86400000 * 0.5).toISOString(),
+      views: 45,
+      upvotes: 18,
+      upvoted: false,
+      commentCount: 2,
+      images: [],
+      comments: [
+        { authorName: '周八', authorCollege: '艺术学院', content: '同感，上次我也遇到了', timestamp: new Date(Date.now() - 3600000 * 3).toISOString() },
+        { authorName: '吴九', authorCollege: '法学院', content: '建议增加扫码签到功能', timestamp: new Date(Date.now() - 3600000).toISOString() }
+      ],
+      answer: '',
+      answeredBy: '',
+      answerTime: ''
+    },
+    {
+      _id: 'q6',
+      category: '其它',
+      content: '校园网在宿舍区晚上11点以后速度特别慢，看视频卡顿严重，影响学习和娱乐。希望能优化网络带宽分配，或者延长高速网络时段。',
+      studentId: '2021006',
+      studentName: '周八',
+      studentCollege: '法学院',
+      status: 'pending',
+      timestamp: new Date(Date.now() - 86400000 * 3).toISOString(),
+      views: 234,
+      upvotes: 156,
+      upvoted: false,
+      commentCount: 4,
+      images: [],
+      comments: [
+        { authorName: '张三', authorCollege: '计算机学院', content: '确实，打王者都460了', timestamp: new Date(Date.now() - 86400000 * 2).toISOString() },
+        { authorName: '李四', authorCollege: '电子信息学院', content: '建议增加带宽', timestamp: new Date(Date.now() - 86400000).toISOString() },
+        { authorName: '王五', authorCollege: '文学院', content: '学习资料都下载不了', timestamp: new Date(Date.now() - 43200000).toISOString() },
+        { authorName: '赵六', authorCollege: '机械工程学院', content: '+1', timestamp: new Date(Date.now() - 3600000).toISOString() }
+      ],
+      answer: '',
+      answeredBy: '',
+      answerTime: ''
+    },
+    {
+      _id: 'q7',
+      category: '食堂',
+      content: '早餐时段食堂排队时间太长，建议增加取餐窗口或者推出线上预订自取服务，这样可以节省很多时间，也能减少人群聚集。',
+      studentId: '2021007',
+      studentName: '吴九',
+      studentCollege: '经济管理学院',
+      status: 'resolved',
+      timestamp: new Date(Date.now() - 86400000 * 10).toISOString(),
+      views: 178,
+      upvotes: 67,
+      upvoted: false,
+      commentCount: 1,
+      images: [],
+      comments: [
+        { authorName: '孙七', authorCollege: '医学院', content: '强烈支持线上预订！', timestamp: new Date(Date.now() - 86400000 * 8).toISOString() }
+      ],
+      answer: '已在一楼试点推出"快取窗口"，提供预包装早餐，可直接扫码取餐无需排队。同时正在开发线上预订系统，预计下学期全面上线。',
+      answeredBy: '食堂管理科-张科长',
+      answerTime: new Date(Date.now() - 86400000 * 6).toISOString()
+    },
+    {
+      _id: 'q8',
+      category: '宿舍',
+      content: '宿舍热水供应时间太短了，晚上11点就停了，对于晚归的同学很不方便。希望能延长到12点或者全天供应。',
+      studentId: '2021008',
+      studentName: '郑十',
+      studentCollege: '外国语学院',
+      status: 'pending',
+      timestamp: new Date(Date.now() - 86400000 * 4).toISOString(),
+      views: 123,
+      upvotes: 89,
+      upvoted: false,
+      commentCount: 2,
+      images: [],
+      comments: [
+        { authorName: '王五', authorCollege: '文学院', content: '支持！晚自习回来经常没热水', timestamp: new Date(Date.now() - 86400000 * 3).toISOString() },
+        { authorName: '张三', authorCollege: '计算机学院', content: '+10086', timestamp: new Date(Date.now() - 86400000).toISOString() }
+      ],
+      answer: '',
+      answeredBy: '',
+      answerTime: ''
+    },
+    {
+      _id: 'q9',
+      category: '图书馆',
+      content: '图书馆占座现象太严重了，很多座位放了一本书就占一天，实际人根本不来。希望能加强管理，或者实行座位预约制。',
+      studentId: '2021009',
+      studentName: '钱十一',
+      studentCollege: '理学院',
+      status: 'resolved',
+      timestamp: new Date(Date.now() - 86400000 * 12).toISOString(),
+      views: 456,
+      upvotes: 234,
+      upvoted: false,
+      commentCount: 3,
+      images: [],
+      comments: [
+        { authorName: '李四', authorCollege: '电子信息学院', content: '太同意了，早上7点来都没位置', timestamp: new Date(Date.now() - 86400000 * 10).toISOString() },
+        { authorName: '赵六', authorCollege: '机械工程学院', content: '建议每小时清理一次', timestamp: new Date(Date.now() - 86400000 * 9).toISOString() },
+        { authorName: '孙七', authorCollege: '医学院', content: '预约制是个好主意', timestamp: new Date(Date.now() - 86400000 * 8).toISOString() }
+      ],
+      answer: '已加强巡查，对长时间占座无人使用的物品进行清理并暂存至服务台。同时正在测试座位预约系统，预计本月内在三楼自习室试点运行。',
+      answeredBy: '图书馆-刘老师',
+      answerTime: new Date(Date.now() - 86400000 * 8).toISOString()
+    },
+    {
+      _id: 'q10',
+      category: '教学楼',
+      content: '晚上教学楼关灯时间太早，10点就全黑了，对于考研和期末复习的同学很不友好。希望能延长部分教室的开放时间到12点。',
+      studentId: '2021010',
+      studentName: '冯十二',
+      studentCollege: '土木工程学院',
+      status: 'pending',
+      timestamp: new Date(Date.now() - 86400000 * 6).toISOString(),
+      views: 567,
+      upvotes: 345,
+      upvoted: false,
+      commentCount: 5,
+      images: [],
+      comments: [
+        { authorName: '张三', authorCollege: '计算机学院', content: '考研党强烈支持！', timestamp: new Date(Date.now() - 86400000 * 5).toISOString() },
+        { authorName: '李四', authorCollege: '电子信息学院', content: '可以开放几间通宵教室', timestamp: new Date(Date.now() - 86400000 * 4).toISOString() },
+        { authorName: '王五', authorCollege: '文学院', content: '现在只能去24小时便利店学习', timestamp: new Date(Date.now() - 86400000 * 3).toISOString() },
+        { authorName: '赵六', authorCollege: '机械工程学院', content: '+1', timestamp: new Date(Date.now() - 86400000 * 2).toISOString() },
+        { authorName: '周八', authorCollege: '法学院', content: '支持延长开放时间', timestamp: new Date(Date.now() - 86400000).toISOString() }
+      ],
+      answer: '',
+      answeredBy: '',
+      answerTime: ''
+    }
+  ]
+};
+
+// 模拟API请求（本地数据版）
+async function apiRequest(url, opts) {
+  await new Promise(r => setTimeout(r, 300)); // 模拟网络延迟
+
+  const urlObj = new URL(url, window.location.href);
+  const params = urlObj.searchParams;
+  const action = params.get('action');
+
+  let data = { success: true, data: [] };
+
+  if (opts && opts.method === 'POST') {
+    const body = JSON.parse(opts.body);
+
+    switch(body.action) {
+      case 'submit': {
+        const newQ = {
+          _id: 'q' + Date.now(),
+          category: body.category,
+          content: body.content,
+          studentId: body.studentId,
+          studentName: body.studentName,
+          studentCollege: body.studentCollege,
+          status: 'pending',
+          timestamp: new Date().toISOString(),
+          views: 0,
+          upvotes: 0,
+          upvoted: false,
+          commentCount: 0,
+          images: body.images || [],
+          comments: [],
+          answer: '',
+          answeredBy: '',
+          answerTime: ''
+        };
+        MOCK_DB.questions.unshift(newQ);
+        data = { success: true, data: newQ };
+        break;
+      }
+      case 'view': {
+        const q = MOCK_DB.questions.find(x => x._id === body.questionId);
+        if (q) q.views = (q.views || 0) + 1;
+        data = { success: true, data: {} };
+        break;
+      }
+      case 'comment': {
+        const q = MOCK_DB.questions.find(x => x._id === body.questionId);
+        if (q) {
+          q.comments.push({
+            authorName: body.authorName,
+            authorCollege: body.authorCollege,
+            content: body.content,
+            timestamp: new Date().toISOString()
+          });
+          q.commentCount = q.comments.length;
+        }
+        data = { success: true, data: q };
+        break;
+      }
+      case 'upvote': {
+        const q = MOCK_DB.questions.find(x => x._id === body.questionId);
+        if (q) {
+          q.upvotes = (q.upvotes || 0) + 1;
+          q.upvoted = true;
+        }
+        data = { success: true, data: q };
+        break;
+      }
+      case 'answer': {
+        const q = MOCK_DB.questions.find(x => x._id === body.questionId);
+        if (q) {
+          q.status = 'resolved';
+          q.answer = body.answer;
+          q.answeredBy = body.teacherName;
+          q.answerTime = new Date().toISOString();
+        }
+        data = { success: true, data: q };
+        break;
+      }
+      case 'myQuestions': {
+        data = { success: true, data: MOCK_DB.questions.filter(x => x.studentId === body.studentId) };
+        break;
+      }
+      default:
+        data = { success: true, data: [] };
+    }
+  } else {
+    // GET 请求
+    let result = [...MOCK_DB.questions];
+
+    if (action === 'detail') {
+      const qId = params.get('questionId');
+      const q = MOCK_DB.questions.find(x => x._id === qId);
+      data = { success: true, data: q || null };
+    } else {
+      const category = params.get('category');
+      const status = params.get('status');
+      const sort = params.get('sort');
+
+      if (category) result = result.filter(x => x.category === category);
+      if (status) result = result.filter(x => x.status === status);
+
+      if (sort === 'hot') {
+        result.sort((a, b) => (b.upvotes + b.commentCount * 2 + b.views * 0.1) - (a.upvotes + a.commentCount * 2 + a.views * 0.1));
+      } else {
+        result.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+      }
+
+      data = { success: true, data: result };
+    }
+  }
+
+  return data;
+}
+
+// ==================== 配置 ====================
+const Storage = {
+  get(k) { const d = localStorage.getItem(k); return d ? JSON.parse(d) : null; },
+  set(k, v) { localStorage.setItem(k, JSON.stringify(v)); }
+};
+
+let currentUser = null;
+let modalSelectedCategory = '';
+let uploadedImages = [];
+let currentQuestionId = null;
+
+// ==================== 初始化 ====================
+window.onload = function() {
+  currentUser = Storage.get('currentUser');
+  if (currentUser) {
+    initNav();
+    if (currentUser.type === 'teacher') showTeacherPage();
+    else showForum();
+  }
+};
+
+// ==================== 导航 ====================
+function initNav() {
+  document.getElementById('topNav').style.display = 'flex';
+  document.getElementById('navUserName').textContent = currentUser.displayName;
+  if (currentUser.type === 'teacher') {
+    document.getElementById('navTeacher').classList.remove('hidden');
+    document.getElementById('navMy').classList.add('hidden');
+  } else {
+    document.getElementById('navTeacher').classList.add('hidden');
+    document.getElementById('navMy').classList.remove('hidden');
+  }
+}
+function setActiveNav(id) {
+  document.querySelectorAll('.nav-links a').forEach(a => a.classList.remove('active'));
+  document.getElementById(id)?.classList.add('active');
+}
+
+// ==================== 页面切换 ====================
+function hideAllPages() {
+  ['loginPage', 'forumPage', 'myQuestionsPage', 'detailPage', 'teacherPage'].forEach(id => {
+    document.getElementById(id).classList.add('hidden');
+  });
+}
+function showLogin() {
+  hideAllPages();
+  document.getElementById('loginPage').classList.remove('hidden');
+  document.getElementById('topNav').style.display = 'none';
+}
+function showForum() {
+  hideAllPages();
+  document.getElementById('forumPage').classList.remove('hidden');
+  setActiveNav('navForum');
+  loadForum();
+  loadHotQuestions();
+}
+function showMyQuestions() {
+  hideAllPages();
+  document.getElementById('myQuestionsPage').classList.remove('hidden');
+  setActiveNav('navMy');
+  loadMyQuestions();
+}
+function showTeacherPage() {
+  hideAllPages();
+  document.getElementById('teacherPage').classList.remove('hidden');
+  setActiveNav('navTeacher');
+  loadTeacherQuestions();
+}
+function backToForum() { showForum(); }
+
+// ==================== 登录 ====================
+function switchLoginTab(type) {
+  document.querySelectorAll('.login-tab').forEach(t => t.classList.remove('active'));
+  event.target.classList.add('active');
+  if (type === 'student') {
+    document.getElementById('studentLoginForm').classList.remove('hidden');
+    document.getElementById('teacherLoginForm').classList.add('hidden');
+  } else {
+    document.getElementById('studentLoginForm').classList.add('hidden');
+    document.getElementById('teacherLoginForm').classList.remove('hidden');
+  }
+}
+function studentLogin() {
+  const college = document.getElementById('studentCollege').value;
+  const name = document.getElementById('studentName').value.trim();
+  const id = document.getElementById('studentId').value.trim();
+  if (!college || !name || !id) { showToast('请填写完整信息', 'error'); return; }
+  currentUser = { type: 'student', college, name, id, displayName: college + '·' + name };
+  Storage.set('currentUser', currentUser);
+  initNav();
+  showForum();
+  showToast('登录成功！欢迎来到校园论坛');
+}
+function teacherLogin() {
+  const name = document.getElementById('teacherName').value.trim();
+  const id = document.getElementById('teacherId').value.trim();
+  if (!name || !id) { showToast('请填写完整信息', 'error'); return; }
+  currentUser = { type: 'teacher', name, id, displayName: name + '（工号：' + id + '）' };
+  Storage.set('currentUser', currentUser);
+  initNav();
+  showTeacherPage();
+  showToast('登录成功！进入管理后台');
+}
+function logout() {
+  currentUser = null;
+  Storage.set('currentUser', null);
+  document.getElementById('studentCollege').value = '';
+  document.getElementById('studentName').value = '';
+  document.getElementById('studentId').value = '';
+  document.getElementById('teacherName').value = '';
+  document.getElementById('teacherId').value = '';
+  showLogin();
+  showToast('已退出登录');
+}
+
+// ==================== 论坛加载 ====================
+async function loadForum() {
+  const category = document.getElementById('filterCategory').value;
+  const sort = document.getElementById('filterSort').value;
+  const status = document.getElementById('filterStatus').value;
+  const params = new URLSearchParams();
+  if (category) params.append('category', category);
+  if (sort) params.append('sort', sort);
+  if (status) params.append('status', status);
+  params.append('role', currentUser?.type || 'student');
+
+  const data = await apiRequest(window.location.origin + '/api?' + params.toString());
+  renderForumCards(data.data);
+  updateStats();
+}
+
+function renderForumCards(questions) {
+  const container = document.getElementById('forumQuestionsList');
+  if (!questions || questions.length === 0) {
+    container.innerHTML = '<div class="empty-state"><div class="icon">📭</div><h3>暂无问题</h3><p>成为第一个提出问题的人吧！</p></div>';
+    return;
+  }
+  container.innerHTML = questions.map(q => `
+    <div class="question-card" onclick="showDetail('${q._id}')">
+      <div class="card-header">
+        <span class="category-tag tag-${getCategoryClass(q.category)}">${getCategoryIcon(q.category)} ${q.category}</span>
+        <span class="status-badge ${q.status === 'resolved' ? 'status-resolved' : 'status-pending'}">
+          ${q.status === 'resolved' ? '✅ 已处理' : '⏳ 待处理'}
+        </span>
+      </div>
+      <div class="author">${q.studentCollege === '***' ? '👤 匿名学生' : '👤 ' + q.studentCollege + '·' + q.studentName}</div>
+      <div class="question-text">${escapeHtml(q.content)}</div>
+      ${q.images && q.images.length > 0 ? `
+        <div class="images-preview">
+          ${q.images.slice(0, 3).map(img => `<img src="${img}" alt="">`).join('')}
+          ${q.images.length > 3 ? `<div style="display:flex;align-items:center;justify-content:center;width:80px;height:80px;background:#f8f9fa;border-radius:8px;color:#999;font-size:13px;">+${q.images.length - 3}</div>` : ''}
+        </div>
+      ` : ''}
+      <div class="card-footer">
+        <div class="stats">
+          <span>👁️ ${q.views || 0}</span>
+          <span>💬 ${q.commentCount || 0}</span>
+          <span>👍 ${q.upvotes || 0}</span>
+        </div>
+        <span>🕐 ${formatDate(q.timestamp)}</span>
+      </div>
+    </div>
+  `).join('');
+}
+
+// ==================== 热门问题 ====================
+async function loadHotQuestions() {
+  const params = new URLSearchParams();
+  params.append('sort', 'hot');
+  params.append('role', currentUser?.type || 'student');
+  const data = await apiRequest(window.location.origin + '/api?' + params.toString());
+  const list = document.getElementById('hotQuestionsList');
+  const hot = data.data.slice(0, 5);
+  if (hot.length === 0) {
+    list.innerHTML = '<li style="color:#999;text-align:center;padding:20px;">暂无热门问题</li>';
+    return;
+  }
+  list.innerHTML = hot.map((q, i) => `
+    <li onclick="showDetail('${q._id}')">
+      <div style="display:flex;align-items:flex-start;gap:8px;">
+        <span class="hot-rank ${i < 3 ? 'top' : 'normal'}">${i + 1}</span>
+        <div>
+          <div class="hot-title">${escapeHtml(q.content)}</div>
+          <div class="hot-meta">
+            <span>${q.category}</span>
+            <span>💬 ${q.commentCount || 0}</span>
+            <span>👍 ${q.upvotes || 0}</span>
+          </div>
+        </div>
+      </div>
+    </li>
+  `).join('');
+}
+
+// ==================== 分类筛选 ====================
+function filterByCategory(cat) {
+  document.getElementById('filterCategory').value = cat;
+  loadForum();
+  document.querySelectorAll('.category-chip').forEach(chip => {
+    chip.classList.toggle('active', chip.dataset.cat === cat || chip.textContent.includes(cat));
+  });
+}
+
+// ==================== 统计更新 ====================
+async function updateStats() {
+  const params = new URLSearchParams();
+  params.append('role', currentUser?.type || 'student');
+  const all = await apiRequest(window.location.origin + '/api?' + params.toString());
+  const data = all.data;
+  document.getElementById('statTotal').textContent = data.length;
+  document.getElementById('statPending').textContent = data.filter(q => q.status === 'pending').length;
+  document.getElementById('statResolved').textContent = data.filter(q => q.status === 'resolved').length;
+  const today = new Date().toDateString();
+  document.getElementById('statToday').textContent = data.filter(q => new Date(q.timestamp).toDateString() === today).length;
+}
+
+// ==================== 提交问题弹窗 ====================
+function openSubmitModal() {
+  if (!currentUser) { showToast('请先登录', 'error'); return; }
+  document.getElementById('submitModal').classList.add('show');
+  modalSelectedCategory = '';
+  uploadedImages = [];
+  document.getElementById('modalQuestionContent').value = '';
+  document.getElementById('imagePreviewGrid').innerHTML = '';
+  document.querySelectorAll('#submitModal .category-chip').forEach(c => c.classList.remove('active'));
+}
+function closeSubmitModal() {
+  document.getElementById('submitModal').classList.remove('show');
+}
+function selectModalCategory(el) {
+  document.querySelectorAll('#submitModal .category-chip').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  modalSelectedCategory = el.dataset.cat;
+}
+
+// ==================== 图片处理（Base64）====================
+function handleImageUpload(event) {
+  const files = event.target.files;
+  if (!files) return;
+  Array.from(files).forEach(file => {
+    if (file.size > 2 * 1024 * 1024) { showToast('图片不能超过 2MB', 'error'); return; }
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      uploadedImages.push(e.target.result);
+      renderImagePreview();
+    };
+    reader.readAsDataURL(file);
+  });
+}
+function renderImagePreview() {
+  const grid = document.getElementById('imagePreviewGrid');
+  grid.innerHTML = uploadedImages.map((img, i) => `
+    <div class="image-preview-item">
+      <img src="${img}" alt="">
+      <button class="remove-btn" onclick="removeImage(${i})">×</button>
+    </div>
+  `).join('');
+}
+function removeImage(index) {
+  uploadedImages.splice(index, 1);
+  renderImagePreview();
+}
+function viewImage(src) {
+  document.getElementById('viewerImage').src = src;
+  document.getElementById('imageViewer').classList.add('show');
+}
+function closeImageViewer() {
+  document.getElementById('imageViewer').classList.remove('show');
+}
+
+// ==================== 提交问题 ====================
+async function submitQuestion() {
+  const content = document.getElementById('modalQuestionContent').value.trim();
+  if (!modalSelectedCategory) { showToast('请选择问题分类', 'error'); return; }
+  if (!content) { showToast('请填写问题描述', 'error'); return; }
+
+  await apiRequest(window.location.origin + '/api', {
+    method: 'POST',
+    body: JSON.stringify({
+      action: 'submit',
+      category: modalSelectedCategory,
+      content: content,
+      studentId: currentUser.id,
+      studentName: currentUser.name,
+      studentCollege: currentUser.college,
+      images: uploadedImages
+    })
+  });
+
+  closeSubmitModal();
+  showToast('问题提交成功！');
+  loadForum();
+  loadHotQuestions();
+}
+
+// ==================== 问题详情 ====================
+async function showDetail(questionId) {
+  currentQuestionId = questionId;
+  apiRequest(window.location.origin + '/api', {
+    method: 'POST',
+    body: JSON.stringify({ action: 'view', questionId })
+  }).catch(() => {});
+
+  const params = new URLSearchParams();
+  params.append('action', 'detail');
+  params.append('questionId', questionId);
+  const data = await apiRequest(window.location.origin + '/api?' + params.toString());
+  const q = data.data;
+
+  hideAllPages();
+  document.getElementById('detailPage').classList.remove('hidden');
+
+  const isTeacher = currentUser && currentUser.type === 'teacher';
+  const isOwner = currentUser && currentUser.id === q.studentId && currentUser.type === 'student';
+
+  document.getElementById('detailContent').innerHTML = `
+    <div class="detail-card">
+      <div class="detail-header">
+        <div>
+          <span class="category-tag tag-${getCategoryClass(q.category)}">${getCategoryIcon(q.category)} ${q.category}</span>
+          <span class="status-badge ${q.status === 'resolved' ? 'status-resolved' : 'status-pending'}" style="margin-left:10px;">
+            ${q.status === 'resolved' ? '✅ 已处理' : '⏳ 待处理'}
+          </span>
+        </div>
+        <span style="font-size:13px;color:#999;">🕐 ${formatDate(q.timestamp)}</span>
+      </div>
+      <div class="author">👤 ${isOwner || !isTeacher ? q.studentCollege + '·' + q.studentName : '匿名学生'}</div>
+      <div class="detail-content">${escapeHtml(q.content)}</div>
+      ${q.images && q.images.length > 0 ? `
+        <div class="detail-images">
+          ${q.images.map(img => `<img src="${img}" alt="" onclick="viewImage('${img}')">`).join('')}
+        </div>
+      ` : ''}
+      <div class="detail-meta">
+        <span>👁️ ${(q.views || 0) + 1} 次浏览</span>
+        <span>💬 ${q.comments.length} 条评论</span>
+        <span>👍 ${q.upvotes || 0} 个赞</span>
+      </div>
+      <div class="action-bar">
+        <button class="action-btn ${q.upvoted ? 'active' : ''}" onclick="upvoteQuestion('${q._id}')">
+          👍 点赞 (${q.upvotes || 0})
+        </button>
+        <button class="action-btn" onclick="document.getElementById('commentInput').focus()">
+          💬 评论 (${q.comments.length})
+        </button>
+        <button class="action-btn" onclick="shareQuestion()">
+          🔗 分享
+        </button>
+      </div>
+      ${q.status === 'resolved' ? `
+        <div class="answer-section">
+          <div class="answer-label">🏫 学校回复</div>
+          <div class="answer-text">${escapeHtml(q.answer)}</div>
+          <div class="responder">回复人：${escapeHtml(q.answeredBy)} · ${formatDate(q.answerTime)}</div>
+        </div>
+      ` : ''}
+      ${isTeacher && q.status === 'pending' ? `
+        <div class="teacher-reply-area">
+          <div class="reply-label">✏️ 回复此问题</div>
+          <textarea id="teacherReplyText" placeholder="请输入处理结果和回复内容..."></textarea>
+          <button class="btn-primary" style="width:auto;padding:12px 30px;" onclick="submitTeacherReply('${q._id}')">提交回复</button>
+        </div>
+      ` : ''}
+    </div>
+    <div class="detail-card comments-section">
+      <div class="section-label">💬 评论交流 (${q.comments.length})</div>
+      <div class="comment-input-area">
+        <textarea id="commentInput" placeholder="发表你的看法..."></textarea>
+        <button onclick="submitComment('${q._id}')">发送</button>
+      </div>
+      <div id="commentsList">
+        ${q.comments.length > 0 ? q.comments.map(c => `
+          <div class="comment-item">
+            <div class="comment-header">
+              <span class="comment-author">👤 ${c.authorCollege}·${c.authorName}</span>
+              <span class="comment-time">${formatDate(c.timestamp)}</span>
+            </div>
+            <div class="comment-text">${escapeHtml(c.content)}</div>
+          </div>
+        `).join('') : '<div style="text-align:center;color:#999;padding:20px;">暂无评论，来说两句吧~</div>'}
+      </div>
+    </div>
+  `;
+}
+
+async function submitComment(questionId) {
+  const content = document.getElementById('commentInput').value.trim();
+  if (!content) { showToast('请输入评论内容', 'error'); return; }
+  if (!currentUser) { showToast('请先登录', 'error'); return; }
+
+  await apiRequest(window.location.origin + '/api', {
+    method: 'POST',
+    body: JSON.stringify({
+      action: 'comment',
+      questionId,
+      content,
+      authorName: currentUser.name,
+      authorCollege: currentUser.college || '教师',
+      authorId: currentUser.id
+    })
+  });
+
+  document.getElementById('commentInput').value = '';
+  showToast('评论成功！');
+  showDetail(questionId);
+}
+
+async function upvoteQuestion(questionId) {
+  if (!currentUser) { showToast('请先登录', 'error'); return; }
+  await apiRequest(window.location.origin + '/api', {
+    method: 'POST',
+    body: JSON.stringify({ action: 'upvote', questionId })
+  });
+  showToast('点赞成功！');
+  showDetail(questionId);
+}
+
+async function submitTeacherReply(questionId) {
+  const answer = document.getElementById('teacherReplyText').value.trim();
+  if (!answer) { showToast('请输入回复内容', 'error'); return; }
+
+  await apiRequest(window.location.origin + '/api', {
+    method: 'POST',
+    body: JSON.stringify({
+      action: 'answer',
+      questionId,
+      answer,
+      teacherName: currentUser.name
+    })
+  });
+
+  showToast('回复成功！问题已标记为已处理');
+  showDetail(questionId);
+}
+
+function shareQuestion() {
+  const url = window.location.href;
+  navigator.clipboard.writeText(url).then(() => {
+    showToast('链接已复制到剪贴板！');
+  }).catch(() => {
+    showToast('复制失败，请手动复制地址栏链接');
+  });
+}
+
+// ==================== 我的反馈 ====================
+async function loadMyQuestions() {
+  const data = await apiRequest(window.location.origin + '/api', {
+    method: 'POST',
+    body: JSON.stringify({ action: 'myQuestions', studentId: currentUser.id })
+  });
+  const container = document.getElementById('myQuestionsList');
+  if (!data.data || data.data.length === 0) {
+    container.innerHTML = '<div class="empty-state"><div class="icon">📝</div><h3>暂无反馈记录</h3><p>您还没有提交过任何问题反馈</p></div>';
+    return;
+  }
+  container.innerHTML = data.data.map(q => `
+    <div class="question-card" onclick="showDetail('${q._id}')">
+      <div class="card-header">
+        <span class="category-tag tag-${getCategoryClass(q.category)}">${getCategoryIcon(q.category)} ${q.category}</span>
+        <span class="status-badge ${q.status === 'resolved' ? 'status-resolved' : 'status-pending'}">
+          ${q.status === 'resolved' ? '✅ 已处理' : '⏳ 待处理'}
+        </span>
+      </div>
+      <div class="question-text">${escapeHtml(q.content)}</div>
+      ${q.images && q.images.length > 0 ? `<div class="images-preview">${q.images.slice(0, 3).map(img => `<img src="${img}" alt="">`).join('')}</div>` : ''}
+      <div class="card-footer">
+        <div class="stats">
+          <span>💬 ${q.commentCount || 0}</span>
+          <span>👍 ${q.upvotes || 0}</span>
+        </div>
+        <span>🕐 ${formatDate(q.timestamp)}</span>
+      </div>
+      ${q.status === 'resolved' ? `
+        <div class="answer-section" style="margin-top:15px;">
+          <div class="answer-label">💬 处理回复</div>
+          <div class="answer-text">${escapeHtml(q.answer)}</div>
+          <div class="responder">回复人：${escapeHtml(q.answeredBy)} · ${formatDate(q.answerTime)}</div>
+        </div>
+      ` : ''}
+    </div>
+  `).join('');
+}
+
+// ==================== 教师管理 ====================
+async function loadTeacherQuestions() {
+  const category = document.getElementById('teacherFilterCategory').value;
+  const status = document.getElementById('teacherFilterStatus').value;
+  const params = new URLSearchParams();
+  if (category) params.append('category', category);
+  if (status) params.append('status', status);
+  params.append('role', 'teacher');
+
+  const data = await apiRequest(window.location.origin + '/api?' + params.toString());
+
+  const allParams = new URLSearchParams();
+  allParams.append('role', 'teacher');
+  const all = await apiRequest(window.location.origin + '/api?' + allParams.toString());
+  const allData = all.data;
+  document.getElementById('tStatTotal').textContent = allData.length;
+  document.getElementById('tStatPending').textContent = allData.filter(q => q.status === 'pending').length;
+  document.getElementById('tStatResolved').textContent = allData.filter(q => q.status === 'resolved').length;
+  const today = new Date().toDateString();
+  document.getElementById('tStatToday').textContent = allData.filter(q => new Date(q.timestamp).toDateString() === today).length;
+
+  const container = document.getElementById('teacherQuestionsList');
+  if (!data.data || data.data.length === 0) {
+    container.innerHTML = '<div class="empty-state"><div class="icon">📭</div><h3>暂无问题</h3><p>当前条件下没有问题反馈</p></div>';
+    return;
+  }
+  container.innerHTML = data.data.map(q => `
+    <div class="question-card" onclick="showDetail('${q._id}')">
+      <div class="card-header">
+        <span class="category-tag tag-${getCategoryClass(q.category)}">${getCategoryIcon(q.category)} ${q.category}</span>
+        <span class="status-badge ${q.status === 'resolved' ? 'status-resolved' : 'status-pending'}">
+          ${q.status === 'resolved' ? '✅ 已处理' : '⏳ 待处理'}
+        </span>
+      </div>
+      <div class="question-text">${escapeHtml(q.content)}</div>
+      ${q.images && q.images.length > 0 ? `<div class="images-preview">${q.images.slice(0, 3).map(img => `<img src="${img}" alt="">`).join('')}</div>` : ''}
+      <div class="card-footer">
+        <div class="stats">
+          <span>👁️ ${q.views || 0}</span>
+          <span>💬 ${q.commentCount || 0}</span>
+          <span>👍 ${q.upvotes || 0}</span>
+        </div>
+        <span>🕐 ${formatDate(q.timestamp)}</span>
+      </div>
+      ${q.status === 'resolved' ? `
+        <div class="answer-section" style="margin-top:15px;">
+          <div class="answer-label">💬 处理回复</div>
+          <div class="answer-text">${escapeHtml(q.answer)}</div>
+          <div class="responder">回复人：${escapeHtml(q.answeredBy)} · ${formatDate(q.answerTime)}</div>
+        </div>
+      ` : ''}
+    </div>
+  `).join('');
+}
+
+// ==================== 工具函数 ====================
+function getCategoryClass(c) {
+  const m = { '食堂': 'canteen', '宿舍': 'dormitory', '教学楼': 'teaching', '图书馆': 'library', '体育设施': 'sports', '其它': 'other' };
+  return m[c] || 'other';
+}
+function getCategoryIcon(c) {
+  const m = { '食堂': '🍽️', '宿舍': '🏠', '教学楼': '🏢', '图书馆': '📚', '体育设施': '⚽', '其它': '📋' };
+  return m[c] || '📋';
+}
+function escapeHtml(t) {
+  const d = document.createElement('div');
+  d.textContent = t;
+  return d.innerHTML;
+}
+function formatDate(iso) {
+  if (!iso) return '';
+  const d = new Date(iso);
+  const now = new Date();
+  const diff = (now - d) / 1000;
+  if (diff < 60) return '刚刚';
+  if (diff < 3600) return Math.floor(diff / 60) + '分钟前';
+  if (diff < 86400) return Math.floor(diff / 3600) + '小时前';
+  if (diff < 604800) return Math.floor(diff / 86400) + '天前';
+  return d.toLocaleDateString('zh-CN');
+}
+function showToast(msg, type) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast ' + (type || 'success');
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+</script>
+
+</body>
+</html>
