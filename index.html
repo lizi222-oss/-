@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>校园问题反馈论坛 - 本地演示版</title>
+<title>甘政法校园问题反馈论坛</title>
 <style>
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -394,7 +394,7 @@ body {
 
 <!-- 顶部导航 -->
 <div class="top-nav" id="topNav" style="display:none;">
-  <div class="logo">🏫 校园问题反馈论坛</div>
+  <div class="logo">🏫 甘政法校园问题反馈论坛</div>
   <div class="nav-links">
     <a onclick="showMyQuestions()" id="navMy">📝 我的反馈</a>
     <a onclick="showForum()" id="navForum" class="active">📋 论坛广场</a>
@@ -410,7 +410,7 @@ body {
 <div id="loginPage">
   <div class="login-container">
     <div class="login-header">
-      <h1>🏫 校园问题反馈论坛</h1>
+      <h1>🏫 甘政法校园问题反馈论坛</h1>
       <p>发现问题 · 交流讨论 · 共同推动校园改善</p>
     </div>
     <div class="login-tabs">
@@ -423,18 +423,21 @@ body {
           <label>所属学院</label>
           <select id="studentCollege">
             <option value="">请选择学院</option>
-            <option value="计算机学院">计算机学院</option>
-            <option value="电子信息学院">电子信息学院</option>
-            <option value="机械工程学院">机械工程学院</option>
-            <option value="经济管理学院">经济管理学院</option>
-            <option value="外国语学院">外国语学院</option>
-            <option value="文学院">文学院</option>
-            <option value="理学院">理学院</option>
-            <option value="医学院">医学院</option>
             <option value="法学院">法学院</option>
+            <option value="民商经济学院">民商经济学院</option>
+            <option value="环境法学院">环境法学院</option>
+            <option value="涉外法治学院">涉外法治学院</option>
+            <option value="司法警察学院">司法警察学院</option>
+            <option value="人工智能学院">人工智能学院</option>
+            <option value="经济学院">经济学院</option>
+            <option value="商学院">商学院</option>
+            <option value="公共管理学院">公共管理学院</option>
+            <option value="马克思主义学院">马克思主义学院</option>
+            <option value="网络空间安全学院">网络空间安全学院</option>
+            <option value="文学与新闻传播学院">文学与新闻传播学院</option>
+             <option value="外国语学院">外国语学院</option>
             <option value="艺术学院">艺术学院</option>
-            <option value="土木工程学院">土木工程学院</option>
-            <option value="化工学院">化工学院</option>
+             <option value="创新创业学院">创新创业学院</option>
           </select>
         </div>
         <div class="form-group"><label>姓名</label><input type="text" id="studentName" placeholder="请输入您的姓名"></div>
@@ -616,9 +619,9 @@ const MOCK_DB = {
       _id: 'q1',
       category: '食堂',
       content: '食堂二楼的麻辣烫窗口最近菜品种类变少了，而且价格好像也涨了。希望学校能关注一下，毕竟很多同学都喜欢吃这个。另外，用餐高峰期的座位也不够，经常要站着等位。',
-      studentId: '2021001',
-      studentName: '张三',
-      studentCollege: '计算机学院',
+      studentId: '2024001',
+      studentName: '赵浩宇',
+      studentCollege: '涉外法治学院',
       status: 'pending',
       timestamp: new Date(Date.now() - 86400000 * 2).toISOString(),
       views: 156,
@@ -627,9 +630,9 @@ const MOCK_DB = {
       commentCount: 3,
       images: [],
       comments: [
-        { authorName: '李四', authorCollege: '电子信息学院', content: '确实，我也发现了，以前有牛肉卷现在没有了', timestamp: new Date(Date.now() - 86400000).toISOString() },
-        { authorName: '王五', authorCollege: '经济管理学院', content: '价格确实涨了不少，以前15块能吃饱，现在得20了', timestamp: new Date(Date.now() - 43200000).toISOString() },
-        { authorName: '赵六', authorCollege: '计算机学院', content: '同意楼主，希望能恢复以前的菜品', timestamp: new Date(Date.now() - 3600000).toISOString() }
+        { authorName: '安冉', authorCollege: '涉外法治学院', content: '确实，我也发现了，以前有牛肉卷现在没有了', timestamp: new Date(Date.now() - 86400000).toISOString() },
+        { authorName: '张汉', authorCollege: '涉外法治学院', content: '价格确实涨了不少，以前15块能吃饱，现在得20了', timestamp: new Date(Date.now() - 43200000).toISOString() },
+        { authorName: '巴梦菲', authorCollege: '涉外法治学院', content: '同意楼主，希望能恢复以前的菜品', timestamp: new Date(Date.now() - 3600000).toISOString() }
       ],
       answer: '',
       answeredBy: '',
@@ -640,8 +643,8 @@ const MOCK_DB = {
       category: '宿舍',
       content: '宿舍楼3栋的电梯最近经常故障，有时候两部都坏了，住在高层的同学上下楼非常不方便。希望能尽快安排维修，或者至少给个预计修复时间。',
       studentId: '2021002',
-      studentName: '李四',
-      studentCollege: '电子信息学院',
+      studentName: '刘茜茜',
+      studentCollege: '涉外法治学院',
       status: 'resolved',
       timestamp: new Date(Date.now() - 86400000 * 5).toISOString(),
       views: 342,
@@ -650,7 +653,7 @@ const MOCK_DB = {
       commentCount: 2,
       images: [],
       comments: [
-        { authorName: '张三', authorCollege: '计算机学院', content: '感同身受，我住12楼，昨天爬了三次', timestamp: new Date(Date.now() - 86400000 * 4).toISOString() },
+        { authorName: '张佳荣', authorCollege: '涉外法治学院', content: '感同身受，我住12楼，昨天爬了三次', timestamp: new Date(Date.now() - 86400000 * 4).toISOString() },
         { authorName: '宿管阿姨', authorCollege: '后勤处', content: '已经联系维修人员了，预计明天修好', timestamp: new Date(Date.now() - 86400000 * 3).toISOString() }
       ],
       answer: '已联系电梯维保单位进行全面检修，更换了损坏的零部件，目前电梯已恢复正常运行。后续会加强日常维护，避免类似问题再次发生。',
@@ -662,8 +665,8 @@ const MOCK_DB = {
       category: '图书馆',
       content: '图书馆自习室的空调温度太低了，很多同学都反映冷，希望能适当调高温度或者提供披肩/毯子借用服务。冬天本来就冷，在图书馆待久了容易感冒。',
       studentId: '2021003',
-      studentName: '王五',
-      studentCollege: '文学院',
+      studentName: '安冉',
+      studentCollege: '涉外法治学院',
       status: 'pending',
       timestamp: new Date(Date.now() - 86400000 * 1.5).toISOString(),
       views: 89,
@@ -672,7 +675,7 @@ const MOCK_DB = {
       commentCount: 1,
       images: [],
       comments: [
-        { authorName: '赵六', authorCollege: '理学院', content: '支持！我已经感冒一次了', timestamp: new Date(Date.now() - 86400000).toISOString() }
+        { authorName: '巴梦菲', authorCollege: '涉外法治学院', content: '支持！我已经感冒一次了', timestamp: new Date(Date.now() - 86400000).toISOString() }
       ],
       answer: '',
       answeredBy: '',
@@ -683,8 +686,8 @@ const MOCK_DB = {
       category: '教学楼',
       content: '第三教学楼301教室的投影仪画面很模糊，坐在后排根本看不清PPT内容。已经持续两周了，影响上课效果，请尽快更换灯泡或维修设备。',
       studentId: '2021004',
-      studentName: '赵六',
-      studentCollege: '机械工程学院',
+      studentName: '龚政',
+      studentCollege: '涉外法治学院',
       status: 'resolved',
       timestamp: new Date(Date.now() - 86400000 * 7).toISOString(),
       views: 67,
@@ -702,8 +705,8 @@ const MOCK_DB = {
       category: '体育设施',
       content: '体育馆的羽毛球场地预约系统经常崩溃，好不容易抢到的时间段到了现场发现场地被占了。希望能优化预约系统，或者增加现场签到验证。',
       studentId: '2021005',
-      studentName: '孙七',
-      studentCollege: '医学院',
+      studentName: '张佳荣',
+      studentCollege: '涉外法治学院',
       status: 'pending',
       timestamp: new Date(Date.now() - 86400000 * 0.5).toISOString(),
       views: 45,
@@ -712,8 +715,8 @@ const MOCK_DB = {
       commentCount: 2,
       images: [],
       comments: [
-        { authorName: '周八', authorCollege: '艺术学院', content: '同感，上次我也遇到了', timestamp: new Date(Date.now() - 3600000 * 3).toISOString() },
-        { authorName: '吴九', authorCollege: '法学院', content: '建议增加扫码签到功能', timestamp: new Date(Date.now() - 3600000).toISOString() }
+        { authorName: '向帅', authorCollege: '涉外法治学院', content: '同感，上次我也遇到了', timestamp: new Date(Date.now() - 3600000 * 3).toISOString() },
+        { authorName: '张汉', authorCollege: '涉外法治学院', content: '建议增加扫码签到功能', timestamp: new Date(Date.now() - 3600000).toISOString() }
       ],
       answer: '',
       answeredBy: '',
@@ -724,8 +727,8 @@ const MOCK_DB = {
       category: '其它',
       content: '校园网在宿舍区晚上11点以后速度特别慢，看视频卡顿严重，影响学习和娱乐。希望能优化网络带宽分配，或者延长高速网络时段。',
       studentId: '2021006',
-      studentName: '周八',
-      studentCollege: '法学院',
+      studentName: '李子建',
+      studentCollege: '涉外法治学院',
       status: 'pending',
       timestamp: new Date(Date.now() - 86400000 * 3).toISOString(),
       views: 234,
@@ -734,10 +737,10 @@ const MOCK_DB = {
       commentCount: 4,
       images: [],
       comments: [
-        { authorName: '张三', authorCollege: '计算机学院', content: '确实，打王者都460了', timestamp: new Date(Date.now() - 86400000 * 2).toISOString() },
-        { authorName: '李四', authorCollege: '电子信息学院', content: '建议增加带宽', timestamp: new Date(Date.now() - 86400000).toISOString() },
-        { authorName: '王五', authorCollege: '文学院', content: '学习资料都下载不了', timestamp: new Date(Date.now() - 43200000).toISOString() },
-        { authorName: '赵六', authorCollege: '机械工程学院', content: '+1', timestamp: new Date(Date.now() - 3600000).toISOString() }
+        { authorName: '安冉', authorCollege: '涉外法治学院', content: '确实，打王者都460了', timestamp: new Date(Date.now() - 86400000 * 2).toISOString() },
+        { authorName: '赵浩宇', authorCollege: '涉外法治学院', content: '建议增加带宽', timestamp: new Date(Date.now() - 86400000).toISOString() },
+        { authorName: '巴梦菲', authorCollege: '涉外法治学院', content: '学习资料都下载不了', timestamp: new Date(Date.now() - 43200000).toISOString() },
+        { authorName: '刘茜茜', authorCollege: '涉外法治学院', content: '+1', timestamp: new Date(Date.now() - 3600000).toISOString() }
       ],
       answer: '',
       answeredBy: '',
@@ -748,8 +751,8 @@ const MOCK_DB = {
       category: '食堂',
       content: '早餐时段食堂排队时间太长，建议增加取餐窗口或者推出线上预订自取服务，这样可以节省很多时间，也能减少人群聚集。',
       studentId: '2021007',
-      studentName: '吴九',
-      studentCollege: '经济管理学院',
+      studentName: '徐晨阳',
+      studentCollege: '涉外法治学院',
       status: 'resolved',
       timestamp: new Date(Date.now() - 86400000 * 10).toISOString(),
       views: 178,
@@ -758,7 +761,7 @@ const MOCK_DB = {
       commentCount: 1,
       images: [],
       comments: [
-        { authorName: '孙七', authorCollege: '医学院', content: '强烈支持线上预订！', timestamp: new Date(Date.now() - 86400000 * 8).toISOString() }
+        { authorName: '刘茜茜', authorCollege: '涉外法治学院', content: '强烈支持线上预订！', timestamp: new Date(Date.now() - 86400000 * 8).toISOString() }
       ],
       answer: '已在一楼试点推出"快取窗口"，提供预包装早餐，可直接扫码取餐无需排队。同时正在开发线上预订系统，预计下学期全面上线。',
       answeredBy: '食堂管理科-张科长',
@@ -769,8 +772,8 @@ const MOCK_DB = {
       category: '宿舍',
       content: '宿舍热水供应时间太短了，晚上11点就停了，对于晚归的同学很不方便。希望能延长到12点或者全天供应。',
       studentId: '2021008',
-      studentName: '郑十',
-      studentCollege: '外国语学院',
+      studentName: '张佳荣',
+      studentCollege: '涉外法治学院',
       status: 'pending',
       timestamp: new Date(Date.now() - 86400000 * 4).toISOString(),
       views: 123,
@@ -779,8 +782,8 @@ const MOCK_DB = {
       commentCount: 2,
       images: [],
       comments: [
-        { authorName: '王五', authorCollege: '文学院', content: '支持！晚自习回来经常没热水', timestamp: new Date(Date.now() - 86400000 * 3).toISOString() },
-        { authorName: '张三', authorCollege: '计算机学院', content: '+10086', timestamp: new Date(Date.now() - 86400000).toISOString() }
+        { authorName: '安冉', authorCollege: '涉外法治学院', content: '支持！晚自习回来经常没热水', timestamp: new Date(Date.now() - 86400000 * 3).toISOString() },
+        { authorName: '张汉', authorCollege: '涉外法治学院', content: '+10086', timestamp: new Date(Date.now() - 86400000).toISOString() }
       ],
       answer: '',
       answeredBy: '',
@@ -791,8 +794,8 @@ const MOCK_DB = {
       category: '图书馆',
       content: '图书馆占座现象太严重了，很多座位放了一本书就占一天，实际人根本不来。希望能加强管理，或者实行座位预约制。',
       studentId: '2021009',
-      studentName: '钱十一',
-      studentCollege: '理学院',
+      studentName: '牢汉',
+      studentCollege: '涉外法治学院',
       status: 'resolved',
       timestamp: new Date(Date.now() - 86400000 * 12).toISOString(),
       views: 456,
@@ -801,9 +804,9 @@ const MOCK_DB = {
       commentCount: 3,
       images: [],
       comments: [
-        { authorName: '李四', authorCollege: '电子信息学院', content: '太同意了，早上7点来都没位置', timestamp: new Date(Date.now() - 86400000 * 10).toISOString() },
-        { authorName: '赵六', authorCollege: '机械工程学院', content: '建议每小时清理一次', timestamp: new Date(Date.now() - 86400000 * 9).toISOString() },
-        { authorName: '孙七', authorCollege: '医学院', content: '预约制是个好主意', timestamp: new Date(Date.now() - 86400000 * 8).toISOString() }
+        { authorName: '安冉', authorCollege: '涉外法治学院', content: '太同意了，早上7点来都没位置', timestamp: new Date(Date.now() - 86400000 * 10).toISOString() },
+        { authorName: '巴梦菲', authorCollege: '涉外法治学院', content: '建议每小时清理一次', timestamp: new Date(Date.now() - 86400000 * 9).toISOString() },
+        { authorName: '赵浩宇', authorCollege: 涉外法治学院', content: '预约制是个好主意', timestamp: new Date(Date.now() - 86400000 * 8).toISOString() }
       ],
       answer: '已加强巡查，对长时间占座无人使用的物品进行清理并暂存至服务台。同时正在测试座位预约系统，预计本月内在三楼自习室试点运行。',
       answeredBy: '图书馆-刘老师',
@@ -814,8 +817,8 @@ const MOCK_DB = {
       category: '教学楼',
       content: '晚上教学楼关灯时间太早，10点就全黑了，对于考研和期末复习的同学很不友好。希望能延长部分教室的开放时间到12点。',
       studentId: '2021010',
-      studentName: '冯十二',
-      studentCollege: '土木工程学院',
+      studentName: '李子建',
+      studentCollege: '涉外法治学院',
       status: 'pending',
       timestamp: new Date(Date.now() - 86400000 * 6).toISOString(),
       views: 567,
@@ -824,11 +827,11 @@ const MOCK_DB = {
       commentCount: 5,
       images: [],
       comments: [
-        { authorName: '张三', authorCollege: '计算机学院', content: '考研党强烈支持！', timestamp: new Date(Date.now() - 86400000 * 5).toISOString() },
-        { authorName: '李四', authorCollege: '电子信息学院', content: '可以开放几间通宵教室', timestamp: new Date(Date.now() - 86400000 * 4).toISOString() },
-        { authorName: '王五', authorCollege: '文学院', content: '现在只能去24小时便利店学习', timestamp: new Date(Date.now() - 86400000 * 3).toISOString() },
-        { authorName: '赵六', authorCollege: '机械工程学院', content: '+1', timestamp: new Date(Date.now() - 86400000 * 2).toISOString() },
-        { authorName: '周八', authorCollege: '法学院', content: '支持延长开放时间', timestamp: new Date(Date.now() - 86400000).toISOString() }
+        { authorName: '牢汉', authorCollege: '涉外法治学院学院', content: '考研党强烈支持！', timestamp: new Date(Date.now() - 86400000 * 5).toISOString() },
+        { authorName: '牢张', authorCollege: '涉外法治学院学院', content: '可以开放几间通宵教室', timestamp: new Date(Date.now() - 86400000 * 4).toISOString() },
+        { authorName: '牢杰', authorCollege: '涉外法治学院学院', content: '现在只能去24小时便利店学习', timestamp: new Date(Date.now() - 86400000 * 3).toISOString() },
+        { authorName: '党博', authorCollege: '涉外法治学院', content: '+1', timestamp: new Date(Date.now() - 86400000 * 2).toISOString() },
+        { authorName: '黑子', authorCollege: '涉外法治学院', content: '支持延长开放时间', timestamp: new Date(Date.now() - 86400000).toISOString() }
       ],
       answer: '',
       answeredBy: '',
